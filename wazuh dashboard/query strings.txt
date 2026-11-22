@@ -1,0 +1,9 @@
+-----------------FOR SYSLOG DENY TRIGGERS-----------------
+rule.id:100007
+rule.id:100015
+
+-----------------FOR SURICATA LOGS-----------------
+rule.id:86601
+
+-----------------FOR HOSPITAL ATTACK TESTS ALERTS-----------------
+rule.id >= 100002 and rule.id <= 100014 and not rule.id: 100007
