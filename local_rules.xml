@@ -1,0 +1,101 @@
+<!-- Local rules -->
+
+<!-- Modify it at your will. -->
+<!-- Copyright (C) 2015, Wazuh Inc. -->
+
+<!-- Example -->
+<group name="Hospital">
+
+  <!--
+  Dec 10 01:02:02 host sshd[1234]: Failed none for root from 1.1.1.1 port 1066 ssh2
+  -->
+  <rule id="100001" level="3">
+    <if_sid>86600</if_sid>
+    <description>Hospital SOC events</description>
+    <field name="app">Smart Hospital SOC</field>
+  </rule>
+
+  <rule id="100002" level="5">
+	<if_sid>100001</if_sid>
+	<field name="event_type">unauthorized_patient_access</field>
+	<description>$(username) tried to access a patient record from $(resource) that was not assigned to them from $(source_ip)</description>
+  </rule>
+
+  <rule id="100003" level="4">
+	<if_sid>100001</if_sid>
+	<field name="event_type">failed_login</field>
+	<description>failed login by $(username) from $(source_ip). STATUS: $(status)</description>
+
+  </rule>
+
+  <rule id="100004" level="9" frequency="5" timeframe="60">
+	<if_matched_sid>100003</if_matched_sid>
+	<same_field>source_ip</same_field>
+	<description>5 failed login attempt from $(source_ip) in 60 seconds</description>
+	
+  </rule>
+
+  
+  <rule id="100005" level="8">
+	<if_sid>100001</if_sid>
+	<field name="event_type">unauthorized_dashboard_access</field>
+	<description>$(username) tried to access the $(resource) dashboard from $(source_ip)</description>
+  </rule>
+  <rule id="100006" level="3">
+	<if_sid>100001</if_sid>
+	<field name="event_type">security_test_run</field>
+	<description>security test initiated by $(username) from $(source_ip) and $(description)</description>
+  </rule>
+
+  <rule id="100007" level="5">
+	<if_sid>81618</if_sid>
+	<match>policyname="LAN-TO-BlockedSites"</match>
+	<description>LAN host $(srcip) tried to access a blocked site ($(dstip))</description>
+  </rule>
+
+  <rule id="100008" level="7">
+	<if_sid>100001</if_sid>
+	<field name="event_type">disabled_account_login</field>
+	<description>$(description) from $(source_ip) status: $(status)</description>
+  </rule>
+
+  <rule id="100009" level="7">
+	<if_sid>100001</if_sid>
+	<field name="event_type">csrf_failure</field>
+	<description>CSRF token validation failure for $(source_ip)</description>
+  </rule>
+  <rule id="100010" level="9">
+	<if_sid>100001</if_sid>
+	<field name="event_type">suspicious_input</field>
+	<description>suspicious input from $(source_ip) possible sql injection severity:$(severity) status:$(status)</description>
+  </rule>
+
+  <rule id="100011" level="9">
+	<if_sid>100001</if_sid>
+	<field name="event_type">iot_device_anomaly</field>
+	<description>$(description) from $(source_ip) severity: $(severity)</description>
+  </rule>
+
+  <rule id="100012" level="8">
+	<if_sid>100001</if_sid>
+	<field name="event_type">rate_limit_exceeded</field>
+	<description>more than 5 invalid login attempts from $(source_ip) under 1 min, account locked for 15 minutes</description>
+  </rule>
+  <rule id="100013" level="7">
+	<if_sid>100001</if_sid>
+	<field name="event_type">account_locked</field>
+	<description>locked account tried to login again from $(source_ip)</description>
+  </rule>
+
+  <rule id="100014" level="4">
+	<if_sid>100001</if_sid>
+	<field name="event_type">session_revoked</field>
+	<description>$(description) from $(source_ip)</description>
+  </rule>
+
+  <rule id="100015" level="7">
+	<if_sid>81618</if_sid>
+	<match>policytype="local-in-policy"</match>
+	<description>outside $(srcip) tried to access the firewall at $(dstport) action: $(action)</description>
+  </rule>
+</group>
