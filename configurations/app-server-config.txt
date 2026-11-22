@@ -1,0 +1,172 @@
+Description:	Ubuntu 26.04.1 LTS
+Python 3.14.4
+               total        used        free      shared  buff/cache   available
+Mem:           2.5Gi       1.6Gi       170Mi        17Mi       895Mi       876Mi
+lo               UNKNOWN        127.0.0.1/8 ::1/128 
+ens33            UP             192.168.10.10/24 fe80::20c:29ff:fe97:c37d/64 
+default via 192.168.10.1 dev ens33 proto static metric 100 
+192.168.10.0/24 dev ens33 proto kernel scope link src 192.168.10.10 metric 100 
+# This is the network config written by 'subiquity'
+network:
+  version: 2
+  renderer: NetworkManager
+  ethernets:
+    ens33:
+      dhcp4: false
+      addresses: [192.168.10.10/24]
+      routes:
+        - to: default
+          via: 192.168.10.1
+      nameservers:
+        addresses: [8.8.8.8]
+# Let NetworkManager manage all devices on this system
+network:
+  version: 2
+  renderer: NetworkManager
+Dockerfile
+README.md
+__pycache__
+app
+config
+docker-compose.yml
+docs
+instance
+logs
+migrations
+pytest.ini
+requirements.txt
+run.py
+scripts
+tests
+wsgi.py
+
+APP_NAME=Smart Hospital SOC
+ENVIRONMENT=development
+
+HOST=0.0.0.0
+PORT=5000
+PREFERRED_URL_SCHEME=http
+
+DATABASE_URL=
+SQLALCHEMY_ECHO=0
+DB_POOL_RECYCLE_SECONDS=1800
+
+SESSION_COOKIE_NAME=hospital_session
+SESSION_COOKIE_SECURE=0
+SESSION_COOKIE_SAMESITE=Lax
+SESSION_LIFETIME_MINUTES=30
+WTF_CSRF_ENABLED=1
+WTF_CSRF_TIME_LIMIT=3600
+
+TRUSTED_PROXY_COUNT=0
+TRUSTED_PROXIES=
+
+AUDIT_LOG_PATH=logs/hospital_audit.json
+APP_ERROR_LOG_PATH=logs/application_error.log
+LOG_MAX_BYTES=10485760
+LOG_BACKUP_COUNT=5
+LOG_FILE_MODE=600
+APP_LOG_LEVEL=INFO
+AUDIT_DB_ENABLED=1
+AUDIT_FILE_ENABLED=1
+
+RATELIMIT_ENABLED=1
+RATELIMIT_STORAGE_URI=memory://
+RATELIMIT_DEFAULT=600 per hour
+LOGIN_RATE_LIMIT=5 per minute
+API_RATE_LIMIT=120 per minute
+IOT_INGEST_RATE_LIMIT=30 per minute
+MAX_FAILED_LOGINS=5
+LOCKOUT_MINUTES=15
+
+
+SECURITY_TESTING_ENABLED=1
+
+IOT_ENABLED=1
+
+
+FORTIGATE_ENABLED=0
+FORTIGATE_EVENT_SOURCE=
+
+SURICATA_ENABLED=0
+SURICATA_EVE_JSON_PATH=
+SURICATA_EVENT_SOURCE=
+
+WAZUH_ENABLED=0
+WAZUH_API_URL=
+WAZUH_API_USER=
+WAZUH_API_VERIFY_TLS=1
+WAZUH_REQUEST_TIMEOUT_SECONDS=5
+
+INTEGRATION_VERIFICATION_FILE=config/integration_verification.json
+9-    <server>
+10:      <address>192.168.100.10</address>
+11-      <port>1514</port>
+12-      <protocol>tcp</protocol>
+13-    </server>
+--
+160-  <!-- Log analysis -->
+161:  <localfile>
+162-    <log_format>command</log_format>
+163-    <command>df -P</command>
+164-    <frequency>360</frequency>
+--
+166-
+167:  <localfile>
+168-    <log_format>full_command</log_format>
+169-    <command>netstat -tulpn | sed 's/\([[:alnum:]]\+\)\ \+[[:digit:]]\+\ \+[[:digit:]]\+\ \+\(.*\):\([[:digit:]]*\)\ \+\([0-9\.\:\*]\+\).\+\ \([[:digit:]]*\/[[:alnum:]\-]*\).*/\1 \2 == \3 == \4 \5/' | sort -k 4 -g | sed 's/ == \(.*\) ==/:\1/' | sed 1,2d</command>
+170-    <alias>netstat listening ports</alias>
+--
+173-
+174:  <localfile>
+175-    <log_format>full_command</log_format>
+176-    <command>last -n 20</command>
+177-    <frequency>360</frequency>
+--
+195-<ossec_config>
+196:  <localfile>
+197-    <log_format>journald</log_format>
+198-    <location>journald</location>
+199-  </localfile>
+200-
+201:  <localfile>
+202-    <log_format>syslog</log_format>
+203-    <location>/var/ossec/logs/active-responses.log</location>
+204-  </localfile>
+205-
+206:  <localfile>
+207-    <log_format>syslog</log_format>
+208-    <location>/var/log/dpkg.log</location>
+209-  </localfile>
+210-  
+211:  <localfile>
+212-	<log_format>json</log_format>
+213-	<location>/home/ashenone/Documents/hospital-soc/340b7bd2/logs/hospital_audit.json</location>
+214-  </localfile>
+215:  <localfile>
+216-	<log_format>json</log_format>
+217-	<location>/var/log/suricata/eve.json</location>
+218-  </localfile>
+This is Suricata version 8.0.3 RELEASE
+18:    HOME_NET: "[192.168.10.0/24]"
+24:    EXTERNAL_NET: "any"
+42:    HTTP_PORTS: "[80,5000]"
+660:  - interface: ens33
+740:  - interface: default
+748:  - interface: default
+803:    - interface: 0000:3b:00.0 # PCIe address of the NIC port
+834:    - interface: default
+854:  - interface: eth0
+881:  - interface: default
+1897:      #   - interface: "enp4s0f0"
+1915:        - interface: "enp4s0f0" # 0000:3b:00.0 # net_bonding0 # ens1f0
+2096: - interface: eth2
+2128: #- interface: eth3
+2133: - interface: default
+2138:  - interface: eth0
+2178:  #- interface: eth1
+2183:  - interface: default
+2067679
+2013504
+active
+active

@@ -1,0 +1,150 @@
+Description:	Ubuntu 24.04.3 LTS
+                Time zone: Etc/UTC (UTC, +0000)
+               total        used        free      shared  buff/cache   available
+Mem:           5.7Gi       2.4Gi       2.5Gi       1.6Mi       1.1Gi       3.4Gi
+WAZUH_VERSION="v4.14.9"
+WAZUH_REVISION="rc2"
+WAZUH_TYPE="server"
+lo               UNKNOWN        127.0.0.1/8 ::1/128 
+ens33            UP             192.168.100.10/24 fe80::20c:29ff:fef7:1510/64 
+default via 192.168.100.254 dev ens33 proto static 
+192.168.100.0/24 dev ens33 proto kernel scope link src 192.168.100.10 
+network:
+  version: 2
+  ethernets:
+    ens33:
+      dhcp4: false
+      addresses: [192.168.100.10/24]
+      routes:
+        - to: default
+          via: 192.168.100.254
+      nameservers:
+        addresses: [8.8.8.8]
+11:    <logall>yes</logall>
+12:    <logall_json>no</logall_json>
+13-    <email_notification>no</email_notification>
+14-    <smtp_server>smtp.example.wazuh.com</smtp_server>
+15-    <email_from>wazuh@example.wazuh.com</email_from>
+16-    <email_to>recipient@example.wazuh.com</email_to>
+17-    <email_maxperhour>12</email_maxperhour>
+18-    <email_log_source>alerts.log</email_log_source>
+--
+34:  <remote>
+35-    <connection>secure</connection>
+36-    <port>1514</port>
+37-    <protocol>tcp</protocol>
+38-    <queue_size>131072</queue_size>
+39-  </remote>
+40-
+41:  <remote>
+42-    <connection>syslog</connection>
+43-    <port>514</port>
+44-    <protocol>udp</protocol>
+45-    <allowed-ips>192.168.100.254</allowed-ips>
+46-    <local_ip>192.168.100.10</local_ip>
+47-  </remote>
+<!-- Local rules -->
+
+<!-- Modify it at your will. -->
+<!-- Copyright (C) 2015, Wazuh Inc. -->
+
+<!-- Example -->
+<group name="Hospital">
+
+  <!--
+  Dec 10 01:02:02 host sshd[1234]: Failed none for root from 1.1.1.1 port 1066 ssh2
+  -->
+  <rule id="100001" level="3">
+    <if_sid>86600</if_sid>
+    <description>Hospital SOC events</description>
+    <field name="app">Smart Hospital SOC</field>
+  </rule>
+
+  <rule id="100002" level="5">
+	<if_sid>100001</if_sid>
+	<field name="event_type">unauthorized_patient_access</field>
+	<description>$(username) tried to access a patient record from $(resource) that was not assigned to them from $(source_ip)</description>
+  </rule>
+
+  <rule id="100003" level="4">
+	<if_sid>100001</if_sid>
+	<field name="event_type">failed_login</field>
+	<description>failed login by $(username) from $(source_ip). STATUS: $(status)</description>
+
+  </rule>
+
+  <rule id="100004" level="9" frequency="5" timeframe="60">
+	<if_matched_sid>100003</if_matched_sid>
+	<same_field>source_ip</same_field>
+	<description>5 failed login attempt from $(source_ip) in 60 seconds</description>
+	
+  </rule>
+
+  
+  <rule id="100005" level="8">
+	<if_sid>100001</if_sid>
+	<field name="event_type">unauthorized_dashboard_access</field>
+	<description>$(username) tried to access the $(resource) dashboard from $(source_ip)</description>
+  </rule>
+  <rule id="100006" level="3">
+	<if_sid>100001</if_sid>
+	<field name="event_type">security_test_run</field>
+	<description>security test initiated by $(username) from $(source_ip) and $(description)</description>
+  </rule>
+
+  <rule id="100007" level="5">
+	<if_sid>81618</if_sid>
+	<match>policyname="LAN-TO-BlockedSites"</match>
+	<description>LAN host $(srcip) tried to access a blocked site ($(dstip))</description>
+  </rule>
+
+  <rule id="100008" level="7">
+	<if_sid>100001</if_sid>
+	<field name="event_type">disabled_account_login</field>
+	<description>$(description) from $(source_ip) status: $(status)</description>
+  </rule>
+
+  <rule id="100009" level="7">
+	<if_sid>100001</if_sid>
+	<field name="event_type">csrf_failure</field>
+	<description>CSRF token validation failure for $(source_ip)</description>
+  </rule>
+  <rule id="100010" level="9">
+	<if_sid>100001</if_sid>
+	<field name="event_type">suspicious_input</field>
+	<description>suspicious input from $(source_ip) possible sql injection severity:$(severity) status:$(status)</description>
+  </rule>
+
+  <rule id="100011" level="9">
+	<if_sid>100001</if_sid>
+	<field name="event_type">iot_device_anomaly</field>
+	<description>$(description) from $(source_ip) severity: $(severity)</description>
+  </rule>
+
+  <rule id="100012" level="8">
+	<if_sid>100001</if_sid>
+	<field name="event_type">rate_limit_exceeded</field>
+	<description>more than 5 invalid login attempts from $(source_ip) under 1 min, account locked for 15 minutes</description>
+  </rule>
+  <rule id="100013" level="7">
+	<if_sid>100001</if_sid>
+	<field name="event_type">account_locked</field>
+	<description>locked account tried to login again from $(source_ip)</description>
+  </rule>
+
+  <rule id="100014" level="4">
+	<if_sid>100001</if_sid>
+	<field name="event_type">session_revoked</field>
+	<description>$(description) from $(source_ip)</description>
+  </rule>
+
+  <rule id="100015" level="7">
+	<if_sid>81618</if_sid>
+	<match>policytype="local-in-policy"</match>
+	<description>outside $(srcip) tried to access the firewall at $(dstport) action: $(action)</description>
+  </rule>
+</group>
+active
+active
+active
+active

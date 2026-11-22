@@ -1,0 +1,254 @@
+Version: FortiGate-VM64 v7.4.12,build2902,260505 (GA.M)
+First GA patch build date: 230509
+Current Security Level: High
+Firmware Signature: certified
+Virus-DB: 1.00000(2018-04-09 18:07)
+Extended DB: 1.00000(2018-04-09 18:07)
+Extreme DB: 1.00000(2018-04-09 18:07)
+AV AI/ML Model: 0.00000(2001-01-01 00:00)
+IPS-DB: 6.00741(2015-12-01 02:30)
+IPS-ETDB: 6.00741(2015-12-01 02:30)
+APP-DB: 6.00741(2015-12-01 02:30)
+Proxy-IPS-DB: 6.00741(2015-12-01 02:30)
+Proxy-IPS-ETDB: 6.00741(2015-12-01 02:30)
+Proxy-APP-DB: 6.00741(2015-12-01 02:30)
+FMWP-DB: 0.00000(2001-01-01 00:00)
+IPS Malicious URL Database: 1.00001(2015-01-01 01:01)
+IoT-Detect: 0.00000(2022-08-17 17:31)
+OT-Detect-DB: 0.00000(2001-01-01 00:00)
+OT-Patch-DB: 0.00000(2001-01-01 00:00)
+OT-Threat-DB: 6.00741(2015-12-01 02:30)
+IPS-Engine: 7.00604(2026-04-13 22:28)
+Serial-Number: FGVMEVWGH9KWOE10
+License Status: Valid
+VM Resources: 1 CPU/1 allowed, 1993 MB RAM/2048 MB allowed
+Log hard disk: Available
+Hostname: FW-HOSPITAL
+Operation Mode: NAT
+Current virtual domain: root
+Max number of virtual domains: 2
+Virtual domains status: 1 in NAT mode, 0 in TP mode
+Virtual domain configuration: disable
+FIPS-CC mode: disable
+Current HA mode: standalone
+Branch point: 2902
+Release Version Information: GA
+FortiOS x86-64: Yes
+System time: Sat Nov 14 12:14:17 2026
+Last reboot reason: shutdown
+
+
+config system interface
+    edit "port1"
+        set vdom "root"
+        set ip 192.168.100.254 255.255.255.0
+        set allowaccess ping https ssh http
+        set type physical
+        set alias "MGMT"
+        set snmp-index 1
+    next
+    edit "port2"
+        set vdom "root"
+        set ip 192.168.10.1 255.255.255.0
+        set allowaccess ping
+        set type physical
+        set alias "HOSPITAL_LAN"
+        set snmp-index 2
+    next
+    edit "port3"
+        set vdom "root"
+        set mode dhcp
+        set allowaccess ping
+        set type physical
+        set alias "WAN_OUTSIDE"
+        set snmp-index 3
+    next
+    edit "naf.root"
+        set vdom "root"
+        set type tunnel
+        set src-check disable
+        set snmp-index 11
+    next
+    edit "l2t.root"
+        set vdom "root"
+        set type tunnel
+        set snmp-index 12
+    next
+    edit "ssl.root"
+        set vdom "root"
+        set type tunnel
+        set alias "SSL VPN interface"
+        set snmp-index 13
+    next
+    edit "fortilink"
+        set vdom "root"
+        set fortilink enable
+        set ip 10.255.1.1 255.255.255.0
+        set allowaccess ping fabric
+        set type aggregate
+        set lldp-reception enable
+        set lldp-transmission enable
+        set snmp-index 14
+    next
+end
+
+
+config system dns
+    set primary 1.1.1.1
+    set secondary 8.8.8.8
+end
+
+
+
+config firewall address
+    edit "EMS_ALL_UNKNOWN_CLIENTS"
+        set uuid b27c1d0c-d769-51f1-d730-b1134d81e646
+        set type dynamic
+        set sub-type ems-tag
+    next
+    edit "EMS_ALL_UNMANAGEABLE_CLIENTS"
+        set uuid b27c21a8-d769-51f1-57c5-4c105bbd4678
+        set type dynamic
+        set sub-type ems-tag
+    next
+    edit "none"
+        set uuid b1ea8482-d769-51f1-6296-352bc6a98825
+        set subnet 0.0.0.0 255.255.255.255
+    next
+    edit "login.microsoftonline.com"
+        set uuid b1ea8a2c-d769-51f1-1ea3-437175c444ec
+        set type fqdn
+        set fqdn "login.microsoftonline.com"
+    next
+    edit "login.microsoft.com"
+        set uuid b1ea8d06-d769-51f1-9658-797546ef5b96
+        set type fqdn
+        set fqdn "login.microsoft.com"
+    next
+    edit "login.windows.net"
+        set uuid b1ea8f54-d769-51f1-746d-8ea738d1e276
+        set type fqdn
+        set fqdn "login.windows.net"
+    next
+    edit "gmail.com"
+        set uuid b1ea91a2-d769-51f1-67f9-0e6af3a4ec5c
+        set type fqdn
+        set fqdn "gmail.com"
+    next
+    edit "wildcard.google.com"
+        set uuid b1ea93dc-d769-51f1-ffdc-8b05867961f4
+        set type fqdn
+        set fqdn "*.google.com"
+    next
+    edit "wildcard.dropbox.com"
+        set uuid b1ea960c-d769-51f1-63d0-15d5b2679ce1
+        set type fqdn
+        set fqdn "*.dropbox.com"
+    next
+    edit "all"
+        set uuid b27881ba-d769-51f1-2d00-888e64bfd493
+    next
+    edit "FIREWALL_AUTH_PORTAL_ADDRESS"
+        set uuid b27882a0-d769-51f1-bb70-d56cf16531dc
+    next
+    edit "FABRIC_DEVICE"
+        set uuid b278832c-d769-51f1-c137-617fd27791b4
+        set comment "IPv4 addresses of Fabric Devices."
+    next
+    edit "SSLVPN_TUNNEL_ADDR1"
+        set uuid b2791544-d769-51f1-7f63-cb185dd78ceb
+        set type iprange
+        set start-ip 10.212.134.200
+        set end-ip 10.212.134.210
+    next
+    edit "fb"
+        set uuid 0586aed8-daa6-51f1-88af-ef2bde1225bf
+        set type fqdn
+        set fqdn "www.facebook.com"
+    next
+    edit "yt"
+        set uuid 1ab656a0-daa6-51f1-7628-4560f8dff127
+        set type fqdn
+        set fqdn "www.youtube.com"
+    next
+    edit "tt"
+        set uuid 3115b6b6-daa6-51f1-4447-a62f8f3b1ada
+        set type fqdn
+        set fqdn "www.tiktok.com"
+    next
+    edit "WAZUH"
+        set uuid 43caf92e-daa6-51f1-1ee5-6697bd330fac
+        set subnet 192.168.100.10 255.255.255.255
+    next
+end
+
+
+config firewall addrgrp
+    edit "G Suite"
+        set uuid b1ea994a-d769-51f1-0062-abfcaa1f688b
+        set member "gmail.com" "wildcard.google.com"
+    next
+    edit "Microsoft Office 365"
+        set uuid b1eaa1ba-d769-51f1-e57c-8747923aeb96
+        set member "login.microsoftonline.com" "login.microsoft.com" "login.windows.net"
+    next
+    edit "BLOCKED-SITES"
+        set uuid 809a3c0c-daa6-51f1-93aa-19a79f7d2ca9
+        set member "fb" "yt" "tt"
+    next
+end
+
+    edit "WAZUH-AGENT"
+        set uuid a84446d0-daa6-51f1-5cd6-a7f7f24ff648
+        set tcp-portrange 1514-1515
+    next
+end
+
+config firewall policy
+    edit 1
+        set name "LAN-TO-BlockedSites"
+        set uuid df2ecd7c-daa7-51f1-88d9-659104f702bd
+        set srcintf "port2"
+        set dstintf "port3"
+        set srcaddr "all"
+        set dstaddr "BLOCKED-SITES"
+        set schedule "always"
+        set service "ALL"
+        set logtraffic all
+    next
+    edit 2
+        set name "LAN-TO-INTERNET"
+        set uuid 6e16cd46-daa8-51f1-5c4c-22560d7a1c4d
+        set srcintf "port2"
+        set dstintf "port3"
+        set action accept
+        set srcaddr "all"
+        set dstaddr "all"
+        set schedule "always"
+        set service "ALL"
+        set logtraffic all
+        set nat enable
+    next
+    edit 3
+        set name "LAN-TO-WAZUH"
+        set uuid dbf1131c-daa8-51f1-10f6-b51b7bf2ec95
+        set srcintf "port2"
+        set dstintf "port1"
+        set action accept
+        set srcaddr "all"
+        set dstaddr "WAZUH"
+        set schedule "always"
+        set service "WAZUH-AGENT"
+        set logtraffic all
+    next
+end
+
+config log syslogd setting
+    set status enable
+    set server "192.168.100.10"
+end
+
+config log setting
+    set fwpolicy-implicit-log enable
+    set local-in-deny-unicast enable
+end
